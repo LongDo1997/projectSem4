@@ -5,22 +5,23 @@ import lombok.Data;
 import lombok.ToString;
 import org.springframework.web.multipart.MultipartFile;
 
-public class BookDTO extends SimpleRequestDTO {
+public class BouquetDTO extends SimpleRequestDTO {
 
 	@Data
 	@ToString
-	public static class BookSearchReqDTO extends SimpleRequestDTO {
+	public static class BouquetSearchReqDTO extends SimpleRequestDTO {
 		private String id;
 		private String name;
-		private String author;
 		private float priceFr;
 		private float priceTo;
-		private MultipartFile[] file;
+		private Integer occasionId;
+		private boolean isActive;
+
 	}
 
 	@Data
 	@ToString
-	public static class BookInsertReqDTO {
+	public static class BouquetInsertReqDTO {
 		private Integer id;
 
 		private String name;
@@ -46,60 +47,40 @@ public class BookDTO extends SimpleRequestDTO {
 		private MultipartFile[] file;
 	}
 
-	public interface BookSearchResultDTO {
+	public interface BouquetSearchResultDTO {
 		String getId();
 
 		String getName();
-
-		String getAuthor();
 
 		String getDescription();
 
 		String getPrice();
 
-		String getQuantity();
+		String getImageUrl();
 
-		String getImageList();
-
-		String getUserCreated();
-
-		String getUserModified();
-
-		String getValiToDt();
-
-		String getUserCreatedId();
-
-		String getUserModifyId();
-
-		String getStatus();
+		String getIsActive();
 
 		String getCreatedAt();
 
-		String getUpdatedAt();
-
-		String getCategoryName();
+		String getOccasionName();
 
 	}
 
 	@Data
 	@ToString
-	public static class BookSearchResponseDTO extends BaseResponseDTO {
+	public static class BouquetSearchResponseDTO {
 
 		private String id;
 
 		private String name;
 
-		private String author;
-
 		private String description;
 
 		private String price;
 
-		private String quantity;
-
-		private String userCreated;
+		private String imageUrl;
 		
-		private String categoryName;
+		private String occasionName;
 
 	}
 }

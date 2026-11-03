@@ -47,8 +47,5 @@ public class AuthService implements UserDetailsService {
 		return roles.stream().map(role -> new SimpleGrantedAuthority(role)).collect(Collectors.toList());
 	}
 
-//	private BookSearchResponseDTO convertToObjectDto(Object o) {
-//		return mapper.map(o, BookSearchResponseDTO.class);
-//	}
 
 }

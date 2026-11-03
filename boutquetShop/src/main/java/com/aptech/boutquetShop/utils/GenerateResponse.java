@@ -19,28 +19,43 @@ public class GenerateResponse {
 		return res;
 	}
 
-	public static <T> ListResponse<T> generateSuccessListResponse(List<T> items, long total) {
+	public static <T> ListResponse<T> generateSuccessListResponse(List<T> items, long total, int totalPage, int size, int currentPage) {
 		ListResponse<T> res = new ListResponse<T>();
 		res.setCode(SUCCESS_CODE);
 		ResponseData<T> data = new ResponseData<T>();
 		data.setItems(items);
 		data.setTotal(total);
+		data.setSize(size);
+		data.setCurrentPage(currentPage);
+		data.setNumberOfElements(items.size());
+		data.setTotalPages(totalPage);
+
 		res.setData(data);
 		return res;
 	}
 
-	public static <T> BaseResponse generateSuccsesBaseResponse(Object item) {
+	public static <T> ListResponse<T> generateSuccessListResponse(List<T> items) {
+		ListResponse<T> res = new ListResponse<T>();
+		res.setCode(SUCCESS_CODE);
+		ResponseData<T> data = new ResponseData<T>();
+		data.setItems(items);
+		data.setTotal(items.size());
+		res.setData(data);
+		return res;
+	}
+
+	public static <T> BaseResponse<T> generateSuccsesBaseResponse(Object item) {
 		BaseResponse res = new BaseResponse();
 		res.setCode(SUCCESS_CODE);
 		res.setData(item);
-		res.setMessage("Thành công");
+		res.setMessage("Success");
 		return res;
 	}
 
 
-	public static <T> BaseResponse generateErrBaseResponse(String message) {
+	public static <T> BaseResponse<T> generateErrBaseResponse(String message) {
 		BaseResponse res = new BaseResponse();
-		res.setCode(SUCCESS_CODE);
+		res.setCode(ERROR_CODE);
 		res.setData(null);
 		res.setMessage(message);
 		return res;

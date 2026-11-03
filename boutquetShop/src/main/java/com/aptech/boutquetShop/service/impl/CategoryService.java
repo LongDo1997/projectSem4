@@ -1,11 +1,6 @@
 package com.aptech.boutquetShop.service.impl;
 
-import com.aptech.boutquetShop.service.ICategoryService;
-
-import java.util.Date;
-import java.util.Optional;
-
-public class CategoryService implements ICategoryService {
+public class CategoryService {
 //	@Autowired
 //	private CategoryRepository categoryRepository;
 //

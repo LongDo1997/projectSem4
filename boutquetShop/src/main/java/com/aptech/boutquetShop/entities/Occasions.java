@@ -2,12 +2,16 @@ package com.aptech.boutquetShop.entities;
 
 import javax.persistence.*;
 
-import lombok.Data;
+import lombok.*;
 
-@Table(name = "Category")
+@Table(name = "Occasions")
 @Entity
 @Data
-public class CategoryEntity extends BaseEntity {
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+public class Occasions {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id")
@@ -16,6 +20,4 @@ public class CategoryEntity extends BaseEntity {
     @Column(name = "Name")
     private String name;
 
-    @Column(name = "Type")
-    private Integer type;
 }

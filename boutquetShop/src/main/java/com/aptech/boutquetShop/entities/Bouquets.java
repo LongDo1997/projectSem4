@@ -1,17 +1,19 @@
 package com.aptech.boutquetShop.entities;
 
 import com.aptech.boutquetShop.utils.Constants;
+import lombok.*;
 
 import javax.persistence.*;
+import java.util.Date;
 
-//@Table(name = "Book")
-//@Entity
-//@Data
-//@Builder
-//@NoArgsConstructor
-//@AllArgsConstructor
-//@ToString
-public class BookEntity extends BaseEntity {
+@Table(name = "Bouquets")
+@Entity
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+public class Bouquets extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "Id")
@@ -19,9 +21,6 @@ public class BookEntity extends BaseEntity {
 
 	@Column(name = "Name")
 	private String name;
-
-	@Column(name = "Author")
-	private String author;
 
 	@Column(name = "Description")
 	private String description;
@@ -31,23 +30,23 @@ public class BookEntity extends BaseEntity {
 	private Float price;
 
 	@Basic
-	@Column(name = "Quantity")
-	private Float quantity;
+	@Column(name = "ImageUrl")
+	private String imageUrl;
 
 	@Basic
-	@Column(name = "ImageList")
-	private String imageList;
+	@Column(name = "IsActive")
+	private boolean isActive;
 
 	@Basic
-	@Column(name = "ValiToDt")
-	private String valiToDt;
+	@Column(name = "CreatedAt")
+	private Date createdAt;
 
-	@Column(name = "CategoryId")
-    private Integer categoryId;
+	@Column(name = "OccasionId")
+    private Integer occasionId;
 
 	@PrePersist
 	private void beforeInsert() {
-		this.valiToDt = Constants.MAXIMUM_DATE_STRING;
+		this.createdAt = Constants.getCurrentDate();
 	}
 
 	@PreUpdate

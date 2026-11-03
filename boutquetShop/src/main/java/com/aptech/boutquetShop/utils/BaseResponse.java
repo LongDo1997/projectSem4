@@ -12,11 +12,11 @@ import lombok.experimental.FieldDefaults;
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class BaseResponse {
+public class BaseResponse<T> {
 	Integer code;
 	String message;
 	String trace;
-	Object data;
+	T data;
 	String clientMessageId;
 	String transactionId;
 	String path;

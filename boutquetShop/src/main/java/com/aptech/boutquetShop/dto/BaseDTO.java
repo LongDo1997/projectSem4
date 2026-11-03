@@ -2,8 +2,6 @@ package com.aptech.boutquetShop.dto;
 
 import java.util.List;
 
-import com.aptech.boutquetShop.dto.ImageDTO.ImageSearchResultDTO;
-
 import lombok.Data;
 import lombok.ToString;
 
@@ -35,7 +33,7 @@ public class BaseDTO {
 
 		private String imageList;
 
-		private List<ImageSearchResultDTO> imageListDTO;
+//		private List<ImageSearchResultDTO> imageListDTO;
 	}
 
 }

@@ -2,7 +2,12 @@ package com.aptech.boutquetShop.api.controllers;
 
 
 import com.aptech.boutquetShop.dto.BouquetDTO;
+import com.aptech.boutquetShop.dto.CartDTO;
+import com.aptech.boutquetShop.dto.UserAccountDTO;
+import com.aptech.boutquetShop.entities.CartItems;
+import com.aptech.boutquetShop.service.impl.AuthService;
 import com.aptech.boutquetShop.service.impl.BouquetService;
+import com.aptech.boutquetShop.service.impl.CartService;
 import com.aptech.boutquetShop.utils.BaseResponse;
 import com.aptech.boutquetShop.utils.Constants;
 import com.aptech.boutquetShop.utils.ListResponse;
@@ -12,10 +17,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -23,25 +25,26 @@ import org.springframework.web.bind.annotation.RestController;
 public class CartController {
 
 	@Autowired
-	BouquetService bouquetService;
+	CartService cartService;
 
 	@GetMapping
-	public ListResponse<BouquetDTO.BouquetSearchResponseDTO> reqGetBouquetListPaging(BouquetDTO.BouquetSearchReqDTO req, Pageable pageable) {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		System.out.println("123123123");
-		System.out.println(authentication);
-
-		System.out.println(authentication.getDetails());
-		System.out.println(authentication.getPrincipal());
-		UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-		System.out.println(userDetails.getUsername());
-		return bouquetService.getBouquetListPaging(req, pageable);
+	public ListResponse<CartDTO.CartItemResponse> reqGetCartListByLoginUser() {
+		return cartService.getCartItemList();
 	}
 
-	@GetMapping(value = "/detail/{id}")
-	public BaseResponse reqGetBouqetDetail(@PathVariable(name = "id") Integer id) throws Exception {
-		return bouquetService.getBouquetListDetail(id);
+	@PostMapping("/update")
+	public BaseResponse<CartItems> reqUpdateCartItem(CartDTO.CartItemUpdateReqDTO req) {
+		BaseResponse<CartItems> response = cartService.updateCartItem(req);
+		return response;
 	}
+
+	@PostMapping("/delete")
+	public BaseResponse<CartItems> reqDeleteCartItem(CartDTO.CartItemUpdateReqDTO req) {
+		req.setQuantity(0);
+		BaseResponse<CartItems> response = cartService.updateCartItem(req);
+		return response;
+	}
+
 
 
 }

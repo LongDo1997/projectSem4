@@ -37,7 +37,6 @@ public class BouquetService {
 				String imgUrl = bouquet.getImageUrl();
 				bouquet.setImageUrl(imgRoothPath+imgUrl);
 			});
-			long total = listResponse.getTotalElements() < pageSize ? listResponse.getTotalElements(): pageSize;
 			return GenerateResponse.generateSuccessListResponse(listResponse.getContent(), listResponse.getTotalElements(), listResponse.getTotalPages(), pageSize, pageNum +1);
 		} catch (Exception e) {
 			return GenerateResponse.generateErrorListResponse("SQL Error Syntax!");

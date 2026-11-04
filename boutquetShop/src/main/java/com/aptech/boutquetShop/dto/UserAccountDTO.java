@@ -8,6 +8,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import javax.persistence.Basic;
+import javax.persistence.Column;
+
 public class UserAccountDTO extends SimpleRequestDTO {
 
 	@Data
@@ -107,5 +110,31 @@ public class UserAccountDTO extends SimpleRequestDTO {
 		private String createdAt;
 
 		private String role;
+	}
+
+	@Data
+	@ToString
+	public static class UserInforResponseDTO extends BaseResponseDTO {
+
+		private int id;
+
+		private String firstName;
+
+		private String lastName;
+
+		private String email;
+
+		private String dob;
+
+		private Integer gender;
+
+		private String phone;
+
+		private String address;
+
+		private String createdAt;
+
+		private String role;
+
 	}
 }

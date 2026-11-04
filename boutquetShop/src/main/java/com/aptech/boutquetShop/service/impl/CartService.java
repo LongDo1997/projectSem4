@@ -1,7 +1,14 @@
 package com.aptech.boutquetShop.service.impl;
 
 import com.aptech.boutquetShop.dto.BouquetDTO;
+import com.aptech.boutquetShop.dto.CartDTO;
+import com.aptech.boutquetShop.dto.UserAccountDTO;
+import com.aptech.boutquetShop.entities.Bouquets;
+import com.aptech.boutquetShop.entities.CartItems;
+import com.aptech.boutquetShop.entities.Carts;
 import com.aptech.boutquetShop.repositories.BouquetRepository;
+import com.aptech.boutquetShop.repositories.CartItemsRepository;
+import com.aptech.boutquetShop.repositories.CartRepository;
 import com.aptech.boutquetShop.utils.BaseResponse;
 import com.aptech.boutquetShop.utils.GenerateResponse;
 import com.aptech.boutquetShop.utils.ListResponse;
@@ -13,6 +20,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 @Service
 public class CartService {
 
@@ -20,46 +32,90 @@ public class CartService {
 	private String imgRoothPath;
 
 	@Autowired
-	private BouquetRepository bouquetRepository;
+	private CartItemsRepository cartItemsRepository;
+
+	@Autowired
+	private AuthService authService;
+
+	@Autowired
+	CartRepository cartRepository;
 
 	@Autowired
 	private ModelMapper mapper;
+    @Autowired
+    private BouquetRepository bouquetRepository;
 
-	public ListResponse<BouquetDTO.BouquetSearchResponseDTO> getBouquetListPaging(BouquetDTO.BouquetSearchReqDTO req, Pageable pageable) {
+	public ListResponse<CartDTO.CartItemResponse> getCartItemList() {
 		try {
-			Integer pageSize =  req.getSize() > 0 ? req.getSize() : 20;
-			Integer pageNum = req.getPage() > 0 ? req.getPage() - 1 : 0;
-			Pageable pageable1 = PageRequest.of(pageNum, pageSize);
-			Page<BouquetDTO.BouquetSearchResultDTO> listBouqet = bouquetRepository.getBouquetListPaing(req, pageable1);
-			Page<BouquetDTO.BouquetSearchResponseDTO> listResponse = listBouqet.map(this::convertToObjectDto);
-			listResponse.forEach(bouquet -> {
-				String imgUrl = bouquet.getImageUrl();
-				bouquet.setImageUrl(imgRoothPath+imgUrl);
+			UserAccountDTO.UserInforResponseDTO userInfor = authService.getUserInforFromJWT();
+			Optional<Carts> cartInfor = cartRepository.findByUserId(userInfor.getId());
+
+			if(!cartInfor.isPresent()){
+				return GenerateResponse.generateSuccessListResponse(new ArrayList<CartDTO.CartItemResponse>());
+			}
+
+			CartDTO.CartItemSearchReqDTO req = new CartDTO.CartItemSearchReqDTO();
+			req.setCartId(cartInfor.get().getId().toString());
+			List<CartDTO.CartItemSearchResultDTO> cartItems = cartItemsRepository.getCartItemList(req);
+			List<CartDTO.CartItemResponse> listResponse = cartItems.stream().map(this::convertToObjectDto).collect(Collectors.toList());
+
+			listResponse.forEach(cartItem -> {
+				String imgUrl = cartItem.getImageUrl();
+				cartItem.setImageUrl(imgRoothPath+imgUrl);
 			});
-			long total = listResponse.getTotalElements() < pageSize ? listResponse.getTotalElements(): pageSize;
-			return GenerateResponse.generateSuccessListResponse(listResponse.getContent(), listResponse.getTotalElements(), listResponse.getTotalPages(), pageSize, pageNum +1);
+			return GenerateResponse.generateSuccessListResponse(listResponse);
 		} catch (Exception e) {
 			return GenerateResponse.generateErrorListResponse("SQL Error Syntax!");
 		}
 
 	}
 
-	public BaseResponse<BouquetDTO.BouquetSearchResponseDTO> getBouquetListDetail(Integer id) throws Exception {
-		BouquetDTO.BouquetSearchReqDTO req = new BouquetDTO.BouquetSearchReqDTO();
-		if(id == null){
-			return GenerateResponse.generateErrBaseResponse("id is not valid");
-		}
-		req.setId(id.toString());
-		BouquetDTO.BouquetSearchResultDTO bouqetDetail = bouquetRepository.getBouquetDetail(req);
-		if (bouqetDetail == null) {
-			return GenerateResponse.generateErrBaseResponse("Product is not exist");
-		}
-		return GenerateResponse.generateSuccsesBaseResponse(convertToObjectDto(bouqetDetail));
+	public BaseResponse<CartItems> updateCartItem(CartDTO.CartItemUpdateReqDTO req){
+		try {
+			UserAccountDTO.UserInforResponseDTO userInfor = authService.getUserInforFromJWT();
+			Optional<Carts> cartInfor = cartRepository.findByUserId(userInfor.getId());
+			Carts cartEntity ;
+			if(!cartInfor.isPresent()){
+				cartEntity = new Carts();
+				cartEntity.setUserId(userInfor.getId());
+				cartEntity = cartRepository.saveAndFlush(cartEntity);
+			} else {
+				cartEntity = cartInfor.get();
+			}
+
+			Bouquets bouquetEntity = bouquetRepository.findById(req.getBouquetId()).get();
+
+			Optional<CartItems> cartItemInfor = cartItemsRepository.findByCartIdAndBouquetId(cartEntity.getId(),req.getBouquetId());
+			CartItems cartItemEntity;
+			if(!cartItemInfor.isPresent()){
+				cartItemEntity = new CartItems();
+				cartItemEntity.setCartId(cartEntity.getId());
+				cartItemEntity.setBouquetId(req.getBouquetId());
+				cartItemEntity.setQuantity(req.getQuantity());
+				cartItemEntity.setUnitPrice(bouquetEntity.getPrice());
+				if(req.getQuantity() > 0){
+					cartItemEntity = cartItemsRepository.saveAndFlush(cartItemEntity);
+				}
+			} else{
+				cartItemEntity =  cartItemInfor.get();
+				if(req.getQuantity() > 0) {
+					cartItemEntity.setQuantity(req.getQuantity());
+					cartItemEntity.setUnitPrice(bouquetEntity.getPrice());
+					cartItemEntity = cartItemsRepository.saveAndFlush(cartItemEntity);
+				} else{
+					cartItemsRepository.delete(cartItemEntity);
+				}
+			}
+			return GenerateResponse.generateSuccsesBaseResponse(cartItemEntity);
+        } catch (Exception e) {
+			String errMessage = e.toString();
+            return GenerateResponse.generateErrBaseResponse(errMessage);
+        }
+
 	}
 
-
-	private BouquetDTO.BouquetSearchResponseDTO convertToObjectDto(Object o) {
-		return mapper.map(o, BouquetDTO.BouquetSearchResponseDTO.class);
+	private CartDTO.CartItemResponse convertToObjectDto(Object o) {
+		return mapper.map(o,CartDTO.CartItemResponse.class);
 	}
 
 }

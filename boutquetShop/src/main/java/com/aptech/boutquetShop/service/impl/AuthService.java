@@ -6,11 +6,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.aptech.boutquetShop.dto.UserAccountDTO;
+import com.aptech.boutquetShop.entities.Users;
 import com.aptech.boutquetShop.repositories.UsersRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -43,9 +47,20 @@ public class AuthService implements UserDetailsService {
 		return us;
 	}
 
+	public UserAccountDTO.UserInforResponseDTO getUserInforFromJWT(){
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+		String userName = userDetails.getUsername();
+		Users userEntity = usersRepository.findByEmail(userName).get();
+
+		return convertToObjectDto(userEntity);
+	}
+
 	private Collection<GrantedAuthority> mapRolesToAuthorities(List<String> roles) {
 		return roles.stream().map(role -> new SimpleGrantedAuthority(role)).collect(Collectors.toList());
 	}
 
-
+	private UserAccountDTO.UserInforResponseDTO convertToObjectDto(Object o) {
+		return mapper.map(o, UserAccountDTO.UserInforResponseDTO.class);
+	}
 }

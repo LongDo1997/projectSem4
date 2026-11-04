@@ -16,6 +16,7 @@ public class BaseResponse<T> {
 	Integer code;
 	String message;
 	String trace;
+	String error;
 	T data;
 	String clientMessageId;
 	String transactionId;

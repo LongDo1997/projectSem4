@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping(Constants.REQUEST_MAPPING_PREFIX_API + Constants.VERSION_API_V1 + "/boutquet")
-public class BoutquetController {
+@RequestMapping(Constants.REQUEST_MAPPING_PREFIX_API + Constants.VERSION_API_V1 + "/bouquet")
+public class BouquetController {
 
 	@Autowired
 	BouquetService bouquetService;

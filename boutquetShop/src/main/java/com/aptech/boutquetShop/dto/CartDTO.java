@@ -34,6 +34,8 @@ public class CartDTO extends SimpleRequestDTO{
     public static class CartItemResponse {
         private String cartItemId;
 
+        private String bouquetId;
+
         private String bouquetName;
 
         private String description;
@@ -48,6 +50,8 @@ public class CartDTO extends SimpleRequestDTO{
 
     public interface CartItemSearchResultDTO {
         String getCartItemId();
+
+        String getBouquetId();
 
         String getBouquetName();
 

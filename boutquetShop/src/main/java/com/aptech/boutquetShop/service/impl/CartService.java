@@ -60,14 +60,21 @@ public class CartService {
 			List<CartDTO.CartItemResponse> listResponse = cartItems.stream().map(this::convertToObjectDto).collect(Collectors.toList());
 
 			listResponse.forEach(cartItem -> {
-				String imgUrl = cartItem.getImageUrl();
-				cartItem.setImageUrl(imgRoothPath+imgUrl);
+				cartItem.setImageUrl(resolveImageUrl(cartItem.getImageUrl()));
 			});
 			return GenerateResponse.generateSuccessListResponse(listResponse);
 		} catch (Exception e) {
 			return GenerateResponse.generateErrorListResponse("SQL Error Syntax!");
 		}
 
+	}
+
+	private String resolveImageUrl(String imageUrl) {
+		if (imageUrl == null || imageUrl.trim().isEmpty()
+				|| imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {
+			return imageUrl;
+		}
+		return imgRoothPath + (imageUrl.startsWith("/") ? "" : "/") + imageUrl;
 	}
 
 	public BaseResponse<CartItems> updateCartItem(CartDTO.CartItemUpdateReqDTO req){

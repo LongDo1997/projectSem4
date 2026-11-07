@@ -58,4 +58,16 @@ public class AuthController {
 		return new ResponseEntity<>("User registered success!", HttpStatus.OK);
 	}
 
+	@PostMapping("/register/customer")
+	public ResponseEntity<String> registerCustomer(UserAccountRegDTO registerDto) {
+		try {
+			usersService.reqRegistUserCustomer(registerDto);
+			return ResponseEntity.status(HttpStatus.CREATED).body("Đăng ký tài khoản thành công.");
+		} catch (BadCredentialsException e) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+		} catch (IllegalArgumentException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
+	}
+
 }

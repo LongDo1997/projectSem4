@@ -55,7 +55,17 @@ public class BouquetService {
 		if (bouqetDetail == null) {
 			return GenerateResponse.generateErrBaseResponse("Product is not exist");
 		}
-		return GenerateResponse.generateSuccsesBaseResponse(convertToObjectDto(bouqetDetail));
+		BouquetDTO.BouquetSearchResponseDTO response = convertToObjectDto(bouqetDetail);
+		response.setImageUrl(resolveImageUrl(response.getImageUrl()));
+		return GenerateResponse.generateSuccsesBaseResponse(response);
+	}
+
+	private String resolveImageUrl(String imageUrl) {
+		if (imageUrl == null || imageUrl.trim().isEmpty()
+				|| imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {
+			return imageUrl;
+		}
+		return imgRoothPath + (imageUrl.startsWith("/") ? "" : "/") + imageUrl;
 	}
 
 

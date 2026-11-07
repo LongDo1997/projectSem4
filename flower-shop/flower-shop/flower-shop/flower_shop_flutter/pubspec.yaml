@@ -1,0 +1,29 @@
+name: flower_shop_flutter
+description: Rosebud Flower Studio Flutter application.
+publish_to: none
+version: 1.0.0+1
+environment:
+  sdk: ^3.9.0
+dependencies:
+  flutter:
+    sdk: flutter
+  http: ^1.2.2
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+  fonts:
+    - family: Georgia
+      fonts:
+        - asset: assets/fonts/georgia.ttf
+        - asset: assets/fonts/georgia-italic.ttf
+          style: italic
+    - family: Arial
+      fonts:
+        - asset: assets/fonts/arial.ttf
+        - asset: assets/fonts/arial-bold.ttf
+          weight: 700

@@ -29,7 +29,7 @@ public class CartItems {
     private Integer quantity;
 
     @Column(name = "UnitPrice")
-    private Float unitPrice;
+    private Double unitPrice;
 
 
 }

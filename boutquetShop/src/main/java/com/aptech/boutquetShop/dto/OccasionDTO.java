@@ -3,7 +3,7 @@ package com.aptech.boutquetShop.dto;
 import lombok.Data;
 import lombok.ToString;
 
-public class OccasionDTO extends SimpleRequestDTO{
+public class OccasionDTO{
     @Data
     @ToString
     public static class OccasionSearchReqDTO extends SimpleRequestDTO {

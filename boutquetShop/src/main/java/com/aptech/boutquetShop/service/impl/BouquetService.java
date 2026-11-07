@@ -12,6 +12,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class BouquetService {
@@ -65,7 +70,12 @@ public class BouquetService {
 				|| imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {
 			return imageUrl;
 		}
-		return imgRoothPath + (imageUrl.startsWith("/") ? "" : "/") + imageUrl;
+
+		List<String> imgList = Arrays.asList(imageUrl.split(","));
+		if(!CollectionUtils.isEmpty(imgList)){
+			imgList = imgList.stream().map(img -> imgRoothPath + (img.startsWith("/") ? "" : "/") + img).collect(Collectors.toList());
+		}
+		return String.join(",",imgList);
 	}
 
 

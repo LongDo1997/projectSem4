@@ -5,6 +5,7 @@ import com.aptech.boutquetShop.dto.BouquetDTO;
 import com.aptech.boutquetShop.dto.CartDTO;
 import com.aptech.boutquetShop.dto.UserAccountDTO;
 import com.aptech.boutquetShop.entities.CartItems;
+import com.aptech.boutquetShop.entities.Carts;
 import com.aptech.boutquetShop.service.impl.AuthService;
 import com.aptech.boutquetShop.service.impl.BouquetService;
 import com.aptech.boutquetShop.service.impl.CartService;
@@ -43,6 +44,11 @@ public class CartController {
 		req.setQuantity(0);
 		BaseResponse<CartItems> response = cartService.updateCartItem(req);
 		return response;
+	}
+
+	@PostMapping("/clear")
+	public BaseResponse<Carts> reqClearCart() {
+		return cartService.clearCart();
 	}
 
 

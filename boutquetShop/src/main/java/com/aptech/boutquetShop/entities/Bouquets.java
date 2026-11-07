@@ -27,7 +27,7 @@ public class Bouquets {
 
 	@Basic
 	@Column(name = "Price")
-	private Float price;
+	private Double price;
 
 	@Basic
 	@Column(name = "ImageUrl")

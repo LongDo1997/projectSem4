@@ -19,8 +19,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -74,7 +76,12 @@ public class CartService {
 				|| imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {
 			return imageUrl;
 		}
-		return imgRoothPath + (imageUrl.startsWith("/") ? "" : "/") + imageUrl;
+
+		List<String> imgList = Arrays.asList(imageUrl.split(","));
+		if(!CollectionUtils.isEmpty(imgList)){
+			imgList = imgList.stream().map(img -> imgRoothPath + (img.startsWith("/") ? "" : "/") + img).collect(Collectors.toList());
+		}
+		return String.join(",",imgList);
 	}
 
 	public BaseResponse<CartItems> updateCartItem(CartDTO.CartItemUpdateReqDTO req){
@@ -118,6 +125,22 @@ public class CartService {
 			String errMessage = e.toString();
             return GenerateResponse.generateErrBaseResponse(errMessage);
         }
+
+	}
+
+	public BaseResponse<Carts> clearCart(){
+		try {
+			UserAccountDTO.UserInforResponseDTO userInfor = authService.getUserInforFromJWT();
+			Carts cart = cartRepository.findByUserId(userInfor.getId()).orElse(null);
+			if(cart == null){
+				return GenerateResponse.generateSuccsesBaseResponse(new Carts());
+			}
+			List<CartItems> cartItems = cartItemsRepository.findByCartId(cart.getId());
+			cartItemsRepository.deleteAll(cartItems);
+			return GenerateResponse.generateSuccsesBaseResponse(new Carts());
+		} catch (Exception e) {
+			return GenerateResponse.generateErrBaseResponse(e.toString());
+		}
 
 	}
 

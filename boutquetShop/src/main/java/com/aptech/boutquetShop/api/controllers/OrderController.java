@@ -40,7 +40,7 @@ public class OrderController {
 
 	@PostMapping("/edit/paid")
 	public BaseResponse<Orders> reqUpdateOrderToPaid(Integer id) {
-		return orderProcessService.processPayment(id);
+		return orderProcessService.processPaymentByCreditCard(id);
 	}
 
 	@PostMapping("/edit/booking")

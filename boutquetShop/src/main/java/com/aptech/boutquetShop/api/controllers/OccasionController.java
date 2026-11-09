@@ -23,7 +23,7 @@ public class OccasionController {
 	@Autowired
 	OccasionService occasionService;
 
-	@GetMapping(value = "/all")
+	@GetMapping(value = {"/all","/anonymous/all"})
 	public ListResponse<OccasionDTO.OccasionSearchResponseDTO> reqGetAllOccasion() {
 		return occasionService.getAllOccasion();
 	}

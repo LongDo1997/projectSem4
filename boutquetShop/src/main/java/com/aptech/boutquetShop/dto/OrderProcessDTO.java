@@ -6,12 +6,12 @@ import lombok.ToString;
 import java.util.Date;
 
 public class OrderProcessDTO {
-
-
     @Data
     @ToString
     public static class OrderBookingReqDTO {
         private Integer orderId;
+
+        private String paymentMethod;
 
         private RecipienttReqDTO receipentReq;
     }

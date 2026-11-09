@@ -18,12 +18,12 @@ public class BouquetController {
 	@Autowired
 	BouquetService bouquetService;
 
-	@GetMapping
+	@GetMapping(value ={"/anonymous/all",""})
 	public ListResponse<BouquetDTO.BouquetSearchResponseDTO> reqGetBouquetListPaging(BouquetDTO.BouquetSearchReqDTO req, Pageable pageable) {
 		return bouquetService.getBouquetListPaging(req, pageable);
 	}
 
-	@GetMapping(value = "/detail/{id}")
+	@GetMapping(value = {"/anonymous/detail/{id}", "/detail/{id}"})
 	public BaseResponse reqGetBouqetDetail(@PathVariable(name = "id") Integer id) throws Exception {
 		return bouquetService.getBouquetListDetail(id);
 	}

@@ -39,7 +39,7 @@ public class OrderProcessService {
 	private ModelMapper mapper;
 
 
-	public BaseResponse<Orders> processPayment(Integer orderId){
+	public BaseResponse<Orders> processPaymentByCreditCard(Integer orderId){
 		Orders orderCreate = new Orders();
 		try {
 			UserAccountDTO.UserInforResponseDTO userInfor = authService.getUserInforFromJWT();
@@ -47,10 +47,11 @@ public class OrderProcessService {
 			if (order == null){
 				return GenerateResponse.generateErrBaseResponse("Order is not exist for this account");
 			}
-			if("Y".equals(order.getPaymentStatus()) ||  !"OC".equals(order.getStatus())){
+			if("Y".equals(order.getPaymentStatus())){
 				return GenerateResponse.generateErrBaseResponse("Payment fail, please check your information again!");
 			}
 			order.setPaymentStatus("Y");
+			order.setPaymentMethod("Credit Card");
 			ordersRepository.saveAndFlush(order);
 
 			return GenerateResponse.generateSuccsesBaseResponse(orderCreate);
@@ -69,8 +70,12 @@ public class OrderProcessService {
 			if (order == null){
 				return GenerateResponse.generateErrBaseResponse("Order is not exist for this account");
 			}
-			if(!"Y".equals(order.getPaymentStatus()) ||  !"OC".equals(order.getStatus())){
+			if(!"OC".equals(order.getStatus())){
 				return GenerateResponse.generateErrBaseResponse("Booking fail, please check your information again!");
+			}
+			String paymentMethod = req.getPaymentMethod();
+			if(!"Credit Card".equals(paymentMethod) && !"By Cash".equals(paymentMethod)){
+				return GenerateResponse.generateErrBaseResponse("Booking fail, Payment Method is invalid ('Credit Card'/'By Cash')n!");
 			}
 			// Save Recipient Infor
 			recipients = this.convertToRecipientEntity(req.getReceipentReq());
@@ -79,6 +84,10 @@ public class OrderProcessService {
 			// Save Order status
 			order.setDeliveryDate(this.getDeliveryTime());
 			order.setStatus("OB");
+
+			if(!"Y".equals(order.getPaymentStatus())){
+				order.setPaymentMethod(req.getPaymentMethod());
+			}
 			ordersRepository.saveAndFlush(order);
 			return GenerateResponse.generateSuccsesBaseResponse(order);
 		} catch (Exception e) {

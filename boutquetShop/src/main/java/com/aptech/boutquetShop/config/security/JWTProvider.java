@@ -4,7 +4,9 @@ import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 
+import com.aptech.boutquetShop.service.impl.TokenBlacklistService;
 import io.jsonwebtoken.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -18,6 +20,9 @@ public class JWTProvider {
 	private static final String secretString = "2ca3bf87ff4e2dc9f3c24c286451b9eff9528f137100caa19cd264f07516cd29";
 	private static final SecretKey key = Keys.hmacShaKeyFor(secretString.getBytes(StandardCharsets.UTF_8));
 //	private static final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+
+	@Autowired
+	TokenBlacklistService tokenBlacklistService;
 
 	public String generateToken(Authentication authentication) {
 		String username = authentication.getName();
@@ -35,7 +40,15 @@ public class JWTProvider {
 		return claims.getSubject();
 	}
 
+	public Date getExpirationFromJWT(String token) {
+		Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+		return claims.getExpiration();
+	}
+
 	public boolean validateToken(String token) {
+		if(tokenBlacklistService.isBlacklisted(token)){
+			throw new AuthenticationCredentialsNotFoundException("JWT was exprired or incorrect");
+		}
 		try {
 			System.out.println(key.getAlgorithm());
 			Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
